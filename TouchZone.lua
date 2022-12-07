@@ -175,14 +175,13 @@ function TouchZone:_PartTouched(part)
 	if not part then return end
 	local search,found = part,nil
 	while true do
-		if search == workspace then found = nil break
-		elseif search:IsA("Model") then
+		search = search:FindFirstAncestorWhichIsA("Model")
+		if search == workspace then return
+		else
 			found = search
 			if found:FindFirstChildOfClass("Humanoid") then break end
 		end
-		search = search.Parent
 	end
-	if not found then return end
 	local character = found.Humanoid:GetState() ~= Enum.HumanoidStateType.Dead and found
 	if character and self:GetState() == "Active" then
 		if self._Callback and not self._Callback(character,part) then
