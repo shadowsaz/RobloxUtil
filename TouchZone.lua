@@ -1,6 +1,6 @@
 --[[
 
-TouchZone v1.2
+TouchZone v1.3
 --------------
 Copyright (c) 2022, shadowsaz
 All rights reserved.
