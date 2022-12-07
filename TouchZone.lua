@@ -13,6 +13,9 @@ LICENSE file in the root directory of this source tree.
 > Handles all of the background work used to detect valid characters,
 > and gives you easy-to-use events and methods to take advantage of.
 
+DevForum: devforum.roblox.com/t/touchzone-v13-simple-touched-event-wrapper/
+Toolbox: www.roblox.com/library/11765196513/TouchZone-v1-3
+
 Code sample:
 --------------
 
