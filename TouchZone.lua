@@ -13,6 +13,31 @@ LICENSE file in the root directory of this source tree.
 > Handles all of the background work used to detect valid characters,
 > and gives you easy-to-use events and methods to take advantage of.
 
+Code sample:
+--------------
+
+local TouchZone = require(game:GetService("ReplicatedStorage"):WaitForChild("TouchZone"))
+local MyPart = script.Parent
+
+local ZoneFilter = function(character,part)
+	if part:FindFirstAncestorWhichIsA("Accessory") then
+		return false
+	end
+	return true
+end
+
+local MyZone = TouchZone.NewZone(MyPart,ZoneFilter)
+
+MyZone.OnEnter:Connect(function(character)
+	print("Character entered zone!")
+end)
+
+MyZone.OnLeave:Connect(function(character)
+	print("Character left zone!")
+end)
+
+--------------
+
 API Reference:
 --------------
 * Words with an asterisk are explained at the bottom
