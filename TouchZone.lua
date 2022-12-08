@@ -1,6 +1,6 @@
 --[[
 
-TouchZone v1.3
+TouchZone v1.4
 --------------
 Copyright (c) 2022, shadowsaz
 All rights reserved.
@@ -178,12 +178,12 @@ end
 local function ValidPart(object)
 	return object and typeof(object) == "Instance" and object:IsA("BasePart")
 end
-local function ArgumentCheck(coreArg1,coreArg2)
-	if not ValidPart(coreArg1) then 
+local function ArgumentCheck(arg1,arg2)
+	if not ValidPart(arg1) then 
 		error("TouchZone | NewZone: Argument 1 must be a BasePart")
-	elseif TouchZone.Created[coreArg1] then
-		error("TouchZone | NewZone: Part \""..coreArg1.."\" already has a zone attached")
-	elseif type(coreArg2) ~= "function" then 
+	elseif TouchZone.Created[arg1] then
+		error("TouchZone | NewZone: Part \""..arg1.."\" already has a zone attached")
+	elseif arg2 and type(arg2) ~= "function" then 
 		error("TouchZone | NewZone: Argument 2 must be a function or nil")
 	end
 end
@@ -199,7 +199,7 @@ function TouchZone:_ClearConnections()
 	end
 end
 
-function TouchZone:_PartTouched(part)
+function TouchZone:_PartTouched(part,initial)
 	if not part then return end
 	local search,found = part,nil
 	while true do
@@ -211,7 +211,7 @@ function TouchZone:_PartTouched(part)
 		end
 	end
 	local character = found.Humanoid:GetState() ~= Enum.HumanoidStateType.Dead and found
-	if character and self:GetState() == "Active" then
+	if character then
 		if self._Callback and not self._Callback(character,part) then
 			return
 		end
@@ -231,7 +231,7 @@ function TouchZone:_PartTouched(part)
 				self:_RemoveCharacter(character)
 			end)
 			table.insert(self._ZoneCons,con)
-			self.OnEnter:_Fire(character)
+			if not initial then self.OnEnter:_Fire(character) end
 		end
 	end
 end
@@ -296,7 +296,9 @@ function TouchZone:Enable()
 		return
 	end
 	self._State = "Active"
-	table.insert(self._ZoneCons,self._ZonePart.Touched:Connect(function(part) self:_PartTouched(part) end))
+	table.insert(self._ZoneCons,self._ZonePart.Touched:Connect(function(part) 
+		if self:GetState() == "Active" then self:_PartTouched(part) end
+	end))
 	table.insert(self._ZoneCons,self._ZonePart.TouchEnded:Connect(function(part)
 		for character,tab in pairs(self._PartQueue) do
 			local index = table.find(tab.Parts,part)
@@ -309,7 +311,9 @@ function TouchZone:Enable()
 			end
 		end
 	end))
-	for _,part in ipairs(workspace:GetPartsInPart(self._ZonePart)) do self:_PartTouched(part) end
+	for _,part in ipairs(workspace:GetPartsInPart(self._ZonePart)) do 
+		self:_PartTouched(part,true) 
+	end
 end
 
 function TouchZone:Disable()
